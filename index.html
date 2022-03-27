@@ -1,0 +1,526 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Watch latest movies and series</title>
+    <link rel="icon" href="img/logo-100.png">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,400;0,500;0,700;1,400;1,500;1,700&family=Sen:wght@400;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+<style type="text/css">
+    *{
+        margin: 0;
+    }
+    body{
+    font-family: 'Roboto', sans-serif;
+    }
+    .navbar{
+        width: 100%;
+        top: 0;
+        height: 50px;
+        background-color: var(--primary-color);
+        position: fixed;
+        z-index: 1;
+    }
+    .navbar-container{
+        display: flex;
+        align-items: center;
+        padding: 0 50px;
+        height: 100%;
+        color: var(--secondary-color);
+        font-family: 'Sen', sans-serif;
+    }
+    .logo-container{
+        flex: 1;
+    }
+    .logo{
+        font-family: 'Sen', sans-serif;
+        font-size: 30px;
+        color: #4dbf00;
+    }
+    .menu-container{
+        flex: 6;
+    }  
+    .menu-list{
+        display: flex;
+        list-style: none;
+    }
+    .menu-list-item{
+        margin-left: 30px;
+    }
+    .menu-list-item-active{
+        font-weight: bold;
+    }
+    .profile-container{
+        flex: 2;
+        display: flex;
+        align-items: center;
+        justify-content: flex-end;
+    }  
+    .profile-text-container{
+        margin: 0 20px;
+    }
+    .profile-pic{
+        width: 32px;
+        height: 32px;
+        border-radius: 50%;
+        object-fit: cover;
+    }
+    .toggle{
+        width: 40px;
+        height: 20px;
+        background-color: var(--secondary-color);
+        border-radius: 30px;
+        display: flex;
+        align-items: center;
+        justify-content: space-around;
+        position: relative;
+        cursor: pointer;
+
+    }
+    .toggle-icon{
+        color: goldenrod;
+    }
+    .toggle-ball{
+        width: 18px;
+        height: 18px;
+        background-color: var(--primary-color);
+        position: absolute;
+        right: 1px;
+        border-radius: 50%;
+    }
+    .sidebar{
+        width: 50px;
+        height: 100%;
+        background-color: var(--primary-color);
+        position: fixed;
+        top: 0;
+        display: flex;
+        flex-direction: column;
+        padding-top: 60px;
+        align-items: center;
+    } 
+    .left-menu-icon{
+        color: var(--secondary-color);
+        font-size: 20px;
+        margin-bottom: 40px;
+    }
+    .container{
+        background-color: var(--body-color);
+        min-height: calc(100vh - 50px);
+        color: var(--secondary-color);
+    }
+    .content-container{
+        margin-left: 50px;
+        margin-top: 50px;
+    }
+    .featured-content{
+        height: 50vh;
+        padding: 50px;
+    }
+    .featured-title{
+        width: 200px;
+    }
+    .featured-des{
+        width: 500px;
+        color: lightgrey;
+        margin: 30px 0;
+    }
+    .featured-button{
+        background-color: #4dbf00;
+        color: white;
+        padding: 10px 20px;
+        border-radius: 10px;
+        border: none;
+        outline: none;
+        font-weight: bold;
+        text-transform: uppercase;
+        cursor: pointer;
+    }
+    .movie-list-container{
+        padding: 0 20px;
+    }
+    .movie-list-wrapper{
+        position: relative;
+        overflow: hidden;
+    }
+    .movie-list{
+        display: flex;
+        height: 300px;
+        align-items: center;
+        transform: translateX(0);
+        transition: 0.8s all ease-in-out;
+    }
+    .movie-list-item{
+        margin-right: 30px;
+        position: relative;
+    }
+    .movie-list-item:hover .movie-list-img{
+        transform: scale(1.2);
+        margin: 0 30px;
+        opacity: 0.5;
+    }
+    .movie-list-item:hover .movie-list-item-title,
+    .movie-list-item:hover .movie-list-des,
+    .movie-list-item:hover .movie-list-btn{
+        opacity: 1;
+    }
+    .movie-list-img{
+        transition: all .8s ease-in-out;
+        width: 270px;
+        height: 200px;
+        object-fit: cover;
+        border-radius: 20px;
+    }
+    .movie-list-item-title{
+        background-color: #333;
+        padding: 0 10px;
+        font-size: 25px;
+        font-weight: bold;
+        position: absolute;
+        top: 1%;
+        left: 30px;
+        opacity: 0;
+        transition: 1s all ease-in-out;
+    }
+    .movie-list-des{
+        background-color: #333333;
+        padding: 10px;
+        font-size: 14px;
+        position: absolute;
+        top: 30%;
+        left: 30px;
+        width: 230px;
+        opacity: 0;
+        transition: 1s all ease-in-out;
+    }
+    .movie-list-btn{
+        padding: 10px;
+        background-color: #4dbf00;
+        color: white;
+        border-radius: 10px;
+        outline: none;
+        border: none;
+        cursor: pointer;
+        position: absolute;
+        bottom: 5px;
+        left: 50px;
+        opacity: 0;
+        transition: 1s all ease-in-out;
+    }
+    .arrow{
+        font-size: 120px;
+        position: absolute;
+        top: 90px;
+        right: 0;
+        color: grey;
+        opacity: 0.5;
+        cursor: pointer;
+    }
+    :root{
+        --primary-color: black;
+        --secondary-color: white;
+        --body-color: #151515; 
+    }
+    .light-theme{
+        --primary-color: white;
+        --secondary-color: black;
+        --body-color: white;
+    }
+
+    @media only screen and (max-width:940px) {
+        .menu-container{
+            display: none;
+        }
+        .featured-des{
+            width: auto;
+        }
+        .featured-content{
+            background-size: auto;
+        }
+    }
+</style>
+</head>
+<body>
+    <div class="navbar">
+        <div class="navbar-container">
+            <div class="logo-container"><h1 class="logo">UWatch</h1></div>
+            <div class="menu-container">
+                <ul class="menu-list">
+                    <li class="menu-list-item-active">Home</li>
+                    <li class="menu-list-item">Series</li>
+                    <li class="menu-list-item">Movies</li>
+                    <li class="menu-list-item">Popular</li>
+                    <li class="menu-list-item">Anime</li>
+                </ul>
+            </div>
+            <div class="profile-container">
+                <img src="img/logo.png" alt="" class="profile-pic">
+                <div class="profile-text-container">
+                    <span class="profile-text">Profile</span>
+                    <i class="fas fa-sort-down"></i>
+                </div>
+                <div class="toggle" id="toggle">
+                    <i class="fas fa-moon toggle-icon"></i>
+                    <i class="fas fa-sun toggle-icon"></i>
+                    <div class="toggle-ball"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="sidebar">
+        <i class="left-menu-icon fas fa-search"></i>
+        <i class="left-menu-icon fas fa-home"></i>
+        <i class="left-menu-icon fas fa-users"></i>
+        <i class="left-menu-icon fas fa-bookmark"></i>
+        <i class="left-menu-icon fas fa-tv"></i>
+        <i class="left-menu-icon fas fa-hourglass-start"></i>
+        <i class="left-menu-icon fas fa-shopping-cart"></i>
+    </div>
+    <div class="container">
+        <div class="content-container">
+            <div class="featured-content" style="background-image: linear-gradient(to bottom, rgba(0,0,0,0),#151515),url(img/dark.jpg);background-size: cover;">
+                <img src="img/dark-t.png" alt="" class="featured-title">
+                <p class="featured-des">A missing child sets four families on a frantic hunt for answers as they unearth a mind-bending mystery that spans three generations.</p>
+                <button class="featured-button">Watch</button>
+            </div>
+            <div class="movie-list-container">
+                <h1 class="movie-list-title">NEW RELEASES</h1>
+                <div class="movie-list-wrapper">
+                    <div class="movie-list">
+                        <div class="movie-list-item">
+                            <img src="img/suicide.jpg" alt="" class="movie-list-img">
+                            <span class="movie-list-item-title">The Suicide Squad</span>
+                            <p class="movie-list-des">The government sends the most dangerous supervillains in the world to the remote, enemy-infused island of Corto Maltese.</p>
+                            <button class="movie-list-btn">Watch</button>
+                        </div>
+                        <div class="movie-list-item">
+                            <img src="img/mortal.jpg" alt="" class="movie-list-img">
+                            <span class="movie-list-item-title">Mortal kombat</span>
+                            <p class="movie-list-des">MMA fighter Cole Young seeks out Earth's greatest champions in order to stand against the enemies of Outworld in a high stakes battle for the universe.</p>
+                            <button class="movie-list-btn">Watch</button>
+                        </div>
+                        <div class="movie-list-item">
+                            <img src="img/matrix.jpg" alt="" class="movie-list-img">
+                            <span class="movie-list-item-title">The Matrix Resurrections</span>
+                            <p class="movie-list-des">To find out if his reality is a physical or mental construct, Mr. Anderson, aka Neo, will have to choose to follow the white rabbit once more.</p>
+                            <button class="movie-list-btn">Watch</button>
+                        </div>
+                        <div class="movie-list-item">
+                            <img src="img/rn.jpg" alt="" class="movie-list-img">
+                            <span class="movie-list-item-title">Red Notice</span>
+                            <p class="movie-list-des">An FBI profiler pursuing the world's most wanted art thief becomes his reluctant partner in crime to catch an elusive crook who's always one step ahead.</p>
+                            <button class="movie-list-btn">Watch</button>
+                        </div>
+                        <div class="movie-list-item">
+                            <img src="img/tenet.jpg" alt="" class="movie-list-img">
+                            <span class="movie-list-item-title">Tenet</span>
+                            <p class="movie-list-des">A secret agent is given a single word as his weapon and sent to prevent the onset of World War III. He must travel through time and bend the laws of nature.</p>
+                            <button class="movie-list-btn">Watch</button>
+                        </div>
+                        <div class="movie-list-item">
+                            <img src="img/army.jpg" alt="" class="movie-list-img">
+                            <span class="movie-list-item-title">Army of Thieves</span>
+                            <p class="movie-list-des">In this prequel to "Army of the Dead," a mysterious woman recruits bank teller Dieter to help her crew crack three legendary safes across Europe.</p>
+                            <button class="movie-list-btn">Watch</button>
+                        </div>
+                        <div class="movie-list-item">
+                            <img src="img/night.jpeg" alt="" class="movie-list-img">
+                            <span class="movie-list-item-title">The 8th Night</span>
+                            <p class="movie-list-des">With prayer beads in one hand and an ax in the other, a monk hunts down a millennia-old spirit that's possessing humans and unleashing hell on Earth.</p>
+                            <button class="movie-list-btn">Watch</button>
+                        </div>
+                    </div>
+                    <i class="fas fa-chevron-right arrow"></i>
+                </div>
+            </div>
+            <div class="movie-list-container">
+                <h1 class="movie-list-title">POPULAR</h1>
+                <div class="movie-list-wrapper">
+                    <div class="movie-list">
+                        <div class="movie-list-item">
+                            <img src="img/nwh.jpg" alt="" class="movie-list-img">
+                            <span class="movie-list-item-title">Spider-Man: No Way Home</span>
+                            <p class="movie-list-des">With Spider-Man's identity now revealed, our friendly neighborhood web-slinger is unmasked and no longer able to separate his normal life.</p>
+                            <button class="movie-list-btn">Watch</button>
+                        </div>
+                        <div class="movie-list-item">
+                            <img src="img/matrix.jpg" alt="" class="movie-list-img">
+                            <span class="movie-list-item-title">The Matrix Resurrections</span>
+                            <p class="movie-list-des">To find out if his reality is a physical or mental construct, Mr. Anderson, aka Neo, will have to choose to follow the white rabbit once more.</p>
+                            <button class="movie-list-btn">Watch</button>
+                        </div>
+                        <div class="movie-list-item">
+                            <img src="img/shang-chi.jpg" alt="" class="movie-list-img">
+                            <span class="movie-list-item-title">Shang-Chi and the Legend of the Ten Rings</span>
+                            <p class="movie-list-des">Martial-arts master Shang-Chi confronts the past he thought he left behind when he's drawn into the web of the mysterious Ten Rings organization.</p>
+                            <button class="movie-list-btn">Watch</button>
+                        </div>
+                        <div class="movie-list-item">
+                            <img src="img/venom.jpg" alt="" class="movie-list-img">
+                            <span class="movie-list-item-title">Venom: Let There Be Carnage</span>
+                            <p class="movie-list-des">When deranged serial killer Cletus Kasady also becomes host to an alien symbiote, Brock and Venom must put aside their differences to stop his reign of terror.</p>
+                            <button class="movie-list-btn">Watch</button>
+                        </div>
+                        <div class="movie-list-item">
+                            <img src="img/eternals.jpg" alt="" class="movie-list-img">
+                            <span class="movie-list-item-title">Eternals</span>
+                            <p class="movie-list-des">The Eternals, a race of immortal beings with superhuman powers who have secretly lived on Earth for thousands of years, reunite to battle the evil Deviants.</p>
+                            <button class="movie-list-btn">Watch</button>
+                        </div>
+                        <div class="movie-list-item">
+                            <img src="img/dune.jpg" alt="" class="movie-list-img">
+                            <span class="movie-list-item-title">Dune</span>
+                            <p class="movie-list-des">Paul Atreides, a young man, must travel to the most dangerous planet in the universe to ensure the future of his family and his people.</p>
+                            <button class="movie-list-btn">Watch</button>
+                        </div>
+                        <div class="movie-list-item">
+                            <img src="img/ghostbuster.jpeg" alt="" class="movie-list-img">
+                            <span class="movie-list-item-title">Ghostbusters: Afterlife</span>
+                            <p class="movie-list-des">When a single mother and her two children move to a new town, they soon discover they have a connection to the original Ghostbusters.</p>
+                            <button class="movie-list-btn">Watch</button>
+                        </div>
+                    </div>
+                    <i class="fas fa-chevron-right arrow"></i>
+                </div>
+            </div>
+            <div class="featured-content" style="background-image: linear-gradient(to bottom, rgba(0,0,0,0),#151515),url(img/squidgame.jpg);background-size: cover;">
+                <img src="img/squidgame-t.png" alt="" class="featured-title">
+                <p class="featured-des">Hundreds of cash-strapped players accept a strange invitation to compete in children's games. Inside, a tempting prize awaits — with deadly high stakes.</p>
+                <button class="featured-button">Watch</button>
+            </div>
+            <div class="movie-list-container">
+                <h1 class="movie-list-title">SERIES</h1>
+                <div class="movie-list-wrapper">
+                    <div class="movie-list">
+                        <div class="movie-list-item">
+                            <img src="img/aouad.jpg" alt="" class="movie-list-img">
+                            <span class="movie-list-item-title">All of us are dead</span>
+                            <p class="movie-list-des">A high school becomes ground zero for a zombie virus outbreak. Trapped students must fight their way out — or turn into one of the rabid infected.</p>
+                            <button class="movie-list-btn">Watch</button>
+                        </div>
+                        <div class="movie-list-item">
+                            <img src="img/money-heist.jpg" alt="" class="movie-list-img">
+                            <span class="movie-list-item-title">Money Heist</span>
+                            <p class="movie-list-des">Eight thieves take hostages and lock themselves in the Royal Mint of Spain as a criminal mastermind manipulates the police to carry out his plan.</p>
+                            <button class="movie-list-btn">Watch</button>
+                        </div>
+                        <div class="movie-list-item">
+                            <img src="img/daredevil.jpg" alt="" class="movie-list-img">
+                            <span class="movie-list-item-title">Marvel's Daredevil</span>
+                            <p class="movie-list-des">Blinded as a young boy, Matt Murdock fights injustice by day as a lawyer and by night as the Super Hero Daredevil in Hell's Kitchen, New York City.</p>
+                            <button class="movie-list-btn">Watch</button>
+                        </div>
+                        <div class="movie-list-item">
+                            <img src="img/punisher.jpg" alt="" class="movie-list-img">
+                            <span class="movie-list-item-title">Marvel's The Punisher</span>
+                            <p class="movie-list-des">A former Marine out to punish the criminals responsible for his family's murder finds himself ensnared in a military conspiracy.</p>
+                            <button class="movie-list-btn">Watch</button>
+                        </div>
+                        <div class="movie-list-item">
+                            <img src="img/stranger.jpg" alt="" class="movie-list-img">
+                            <span class="movie-list-item-title">Stranger Things</span>
+                            <p class="movie-list-des">When a young boy vanishes, a small town uncovers a mystery involving secret experiments, terrifying supernatural forces and one strange little girl.</p>
+                            <button class="movie-list-btn">Watch</button>
+                        </div>
+                        <div class="movie-list-item">
+                            <img src="img/bad.jpg" alt="" class="movie-list-img">
+                            <span class="movie-list-item-title">Breaking Bad</span>
+                            <p class="movie-list-des">A high school chemistry teacher dying of cancer teams with a former student to secure his family's future by manufacturing and selling crystal meth.</p>
+                            <button class="movie-list-btn">Watch</button>
+                        </div>
+                        <div class="movie-list-item">
+                            <img src="img/peaky-blinder.jpeg" alt="" class="movie-list-img">
+                            <span class="movie-list-item-title">Peaky Blinders</span>
+                            <p class="movie-list-des">A notorious gang in 1919 Birmingham, England, is led by the fierce Tommy Shelby, a crime boss set on moving up in the world no matter the cost.</p>
+                            <button class="movie-list-btn">Watch</button>
+                        </div>
+                    </div>
+                    <i class="fas fa-chevron-right arrow"></i>
+                </div>
+            </div>
+            <div class="movie-list-container">
+                <h1 class="movie-list-title">ANIME</h1>
+                <div class="movie-list-wrapper">
+                    <div class="movie-list">
+                        <div class="movie-list-item">
+                            <img src="img/dbz.jpg" alt="" class="movie-list-img">
+                            <span class="movie-list-item-title">Dragon Ball Z</span>
+                            <p class="movie-list-des">Five years after winning the World Martial Arts tournament, Goku is now living a peaceful life.A mysterious enemy named Raditz appears who presents himself as Goku's long-lost brother.</p>
+                            <button class="movie-list-btn">Watch</button>
+                        </div>
+                        <div class="movie-list-item">
+                            <img src="img/naruto.jpg" alt="" class="movie-list-img">
+                            <span class="movie-list-item-title">Naruto</span>
+                            <p class="movie-list-des">Naruto Uzumaki, a young ninja who seeks recognition from his peers and dreams of becoming the Hokage, the leader of his village.</p>
+                            <button class="movie-list-btn">Watch</button>
+                        </div>
+                        <div class="movie-list-item">
+                            <img src="img/aot.jpg" alt="" class="movie-list-img">
+                            <span class="movie-list-item-title">Attack on Titan</span>
+                            <p class="movie-list-des">Eren Yeager, who vows to exterminate the Titans after a Titan brings about the destruction of his hometown and the death of his mother.</p>
+                            <button class="movie-list-btn">Watch</button>
+                        </div>
+                        <div class="movie-list-item">
+                            <img src="img/ds.jpg" alt="" class="movie-list-img">
+                            <span class="movie-list-item-title">Demon Slayer</span>
+                            <p class="movie-list-des">Tanjiro Kamado, who strives to become a demon slayer after his family was slaughtered and his younger sister Nezuko turned into a demon.</p>
+                            <button class="movie-list-btn">Watch</button>
+                        </div>
+                        <div class="movie-list-item">
+                            <img src="img/op.jpg" alt="" class="movie-list-img">
+                            <span class="movie-list-item-title">One Piece</span>
+                            <p class="movie-list-des">Monkey D. Luffy, a young man made of rubber, sets off on a journey from the East Blue Sea to find the mythical treasure, the One Piece, and be the King of the Pirates.</p>
+                            <button class="movie-list-btn">Watch</button>
+                        </div>
+                        <div class="movie-list-item">
+                            <img src="img/gohs.png" alt="" class="movie-list-img">
+                            <span class="movie-list-item-title">The God Of High School</span>
+                            <p class="movie-list-des">When an island half-disappears from the face of the earth, a mysterious organization sends out invitations for a tournament to every skilled fighter in the world.</p>
+                            <button class="movie-list-btn">Watch</button>
+                        </div>
+                        <div class="movie-list-item">
+                            <img src="img/dn.jpg" alt="" class="movie-list-img">
+                            <span class="movie-list-item-title">Death note</span>
+                            <p class="movie-list-des">Light Yagami, a teen genius who discovers a mysterious notebook the "Death Note", which the user the supernatural ability to kill anyone whose name is written in its pages.</p>
+                            <button class="movie-list-btn">Watch</button>
+                        </div>
+                    </div>
+                    <i class="fas fa-chevron-right arrow"></i>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script>
+        const arrows = document.querySelectorAll(".arrow");
+        const movielists = document.querySelectorAll(".movie-list");
+        arrows.forEach((arrow,i) => {
+            const itemnum = movielists[i].querySelectorAll("img").length;
+            let clickcounter = 0;
+            arrow.addEventListener("click",()=>{
+                const ratio = Math.floor(window.innerWidth/270);
+                clickcounter++;
+                if (itemnum - (4+clickcounter) + (5-ratio) >= 0) {
+                    movielists[i].style.transform = `translateX(${movielists[i].computedStyleMap().get("transform")[0].x.value-300}px)`
+                }else{
+                    movielists[i].style.transform = "translateX(0)";
+                    clickcounter = 0;
+                }
+            })
+        });
+        var toggle = document.getElementById("toggle");
+        toggle.onclick = function(){
+            document.body.classList.toggle("light-theme");
+            if (document.body.classList.contains("light-theme")) {
+                ball = document.querySelector(".toggle-ball");
+                ball.style.left = "1px";
+             }else{
+                ball.style.left = "";
+             }
+        }
+    </script>
+</body>
+</html>
